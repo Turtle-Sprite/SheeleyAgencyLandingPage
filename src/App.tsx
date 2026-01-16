@@ -1,9 +1,9 @@
-import { Hero } from "./src/components/Hero";
-import { Features } from "./src/components/Features";
-import { Testimonials } from "./src/components/Testimonials";
-import { LeadForm } from "./src/components/LeadForm";
-import { WhyChooseUs } from "./src/components/WhyChooseUs";
-import { Footer } from "./src/components/Footer";
+import { Hero } from "./components/Hero";
+import { Features } from "./components/Features";
+import { Testimonials } from "./components/Testimonials";
+import { LeadForm } from "./components/LeadForm";
+import { WhyChooseUs } from "./components/WhyChooseUs";
+import { Footer } from "./components/Footer";
 import { useEffect } from "react";
 import emailjs from '@emailjs/browser';
 

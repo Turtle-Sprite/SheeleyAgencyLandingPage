@@ -4,7 +4,8 @@
 			"path": "."
 		},
 		{
-			"path": "."
+			"name": "SheeleyAgencyLandingPage",
+			"path": "../../../Desktop/Web Design/Allstate Landing Pages/SheeleyAgencyLandingPage"
 		}
 	]
 }

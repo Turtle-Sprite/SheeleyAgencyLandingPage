@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { CheckCircle2, ArrowRight, Star } from "./Icons";
-import profileImage from "";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import emailjs from '@emailjs/browser';
 
@@ -323,15 +322,7 @@ export function LeadForm() {
         <div className="grid lg:grid-cols-[2fr_3fr] gap-12 items-start relative z-10">
           <div className="lg:pt-12 order-2 lg:order-1">
             
-            <div className="mb-8 flex justify-center">
-              <div className="bg-white p-4 rounded-lg shadow-xl">
-                <img 
-                  src={profileImage} 
-                  alt="Insurance agent" 
-                  className="w-72 h-72 object-cover rounded"
-                />
-              </div>
-            </div>
+            {/* Profile image removed - add your own image here if needed */}
 
             <div className="space-y-6">
               <div className="flex items-start gap-4">
