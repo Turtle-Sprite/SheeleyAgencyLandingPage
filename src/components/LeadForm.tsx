@@ -46,10 +46,10 @@ const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_URL || '';
                           
 
     // Check if EmailJS is configured
-    if (SERVICE_ID === import.meta.env.VITE_EMAILJS_SERVICE_ID || 
-        TEMPLATE_ID_CUSTOMER === import.meta.env || 
-        TEMPLATE_ID_ADMIN === import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CUSTOMER || 
-        PUBLIC_KEY === import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
+    if (SERVICE_ID || 
+        TEMPLATE_ID_CUSTOMER|| 
+        TEMPLATE_ID_ADMIN || 
+        PUBLIC_KEY) {
       setError('EmailJS is not configured yet. Please update the credentials in LeadForm.tsx. See EMAILJS_SETUP.md for instructions. For now, we\'ll save your info locally.');
       console.log("Form submitted (EmailJS not configured):", formData);
       setSending(false);
