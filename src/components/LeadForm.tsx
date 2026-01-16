@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { CheckCircle2, ArrowRight, Star } from "./Icons";
+import { CheckCircle2, ArrowRight } from "./Icons";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import emailjs from '@emailjs/browser';
+import profileImage from '../assets/DebbieSheeley.png';
 
 export function LeadForm() {
   const [formData, setFormData] = useState({
@@ -323,6 +324,7 @@ export function LeadForm() {
           <div className="lg:pt-12 order-2 lg:order-1">
             
             {/* Profile image removed - add your own image here if needed */}
+            <img src={profileImage} alt="Deborah Sheeley" className="w-48 h-48 rounded-full mx-auto mb-6" />
 
             <div className="space-y-6">
               <div className="flex items-start gap-4">
