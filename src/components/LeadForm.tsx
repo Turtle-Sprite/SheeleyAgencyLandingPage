@@ -1,8 +1,9 @@
+
+import profileImage from '../assets/DebbieSheeley.png';
 import { useState } from "react";
 import { CheckCircle2, ArrowRight } from "./Icons";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import emailjs from '@emailjs/browser';
-import profileImage from '../assets/DebbieSheeley.png';
 
 export function LeadForm() {
   const [formData, setFormData] = useState({
@@ -35,21 +36,26 @@ export function LeadForm() {
     setSending(true);
     setError("");
 
-    // EmailJS Configuration - Using environment variables
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
-const TEMPLATE_ID_CUSTOMER = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CUSTOMER || '';
-const TEMPLATE_ID_ADMIN = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_ADMIN || '';
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+    // EmailJS Configuration
+    // STEP 1: Go to https://dashboard.emailjs.com/admin/account
+    // STEP 2: Copy your "Public Key" (under API Keys section)
+    // STEP 3: Go to Email Services and copy your Service ID
+    // STEP 4: Go to Email Templates and create/copy your Template IDs
+    const SERVICE_ID = 'service_2pf0qcp';
+    const TEMPLATE_ID_CUSTOMER = 'template_p9xgdq3'; // Thank you email to customer
+    const TEMPLATE_ID_ADMIN = 'template_hwb4lda'; // Lead notification to you
+    const PUBLIC_KEY = 'rI1-t507fnmxRNY3e'; // From https://dashboard.emailjs.com/admin/account
 
-// Google Sheets Configuration - Using environment variables
-const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_URL || '';
-                          
+    // Google Sheets Configuration
+    // See GOOGLE_SHEETS_SETUP.md for detailed setup instructions
+    const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwgv4cskI0Vw9qorQU3tenO_q1KJ4f1pl4t-RAKTMLpI7NqeVMZlBLTMpzWyGrpefkS/exec';
+                                      
 
     // Check if EmailJS is configured
-    if (SERVICE_ID || 
-        TEMPLATE_ID_CUSTOMER|| 
-        TEMPLATE_ID_ADMIN || 
-        PUBLIC_KEY) {
+    if (SERVICE_ID === 'service_2pf0qcp' || 
+        TEMPLATE_ID_CUSTOMER === 'template_p9xgdq3' || 
+        TEMPLATE_ID_ADMIN === 'template_hwb4lda' || 
+        PUBLIC_KEY === 'rI1-t507fnmxRNY3e') {
       setError('EmailJS is not configured yet. Please update the credentials in LeadForm.tsx. See EMAILJS_SETUP.md for instructions. For now, we\'ll save your info locally.');
       console.log("Form submitted (EmailJS not configured):", formData);
       setSending(false);
@@ -319,6 +325,7 @@ const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_URL || '';
           <div className="lg:pt-12 order-2 lg:order-1">
             
             {/* Profile image removed - add your own image here if needed */}
+            <img src={profileImage} alt="Deborah Sheeley" className="w-48 h-48 rounded-full mx-auto mb-6" />
             <img src={profileImage} alt="Deborah Sheeley" className="w-48 h-48 rounded-full mx-auto mb-6" />
 
             <div className="space-y-6">
