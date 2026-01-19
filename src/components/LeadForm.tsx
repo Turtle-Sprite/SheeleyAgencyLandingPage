@@ -1,8 +1,20 @@
 import { useState } from "react";
-import { CheckCircle2, ArrowRight } from "./Icons";
+import { CheckCircle2, ArrowRight, Star } from "./Icons";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import emailjs from '@emailjs/browser';
-import profileImage from '../assets/DebbieSheeley.png';
+import profileImage from 'figma:asset/baf04cd22f350e24551cf8dfa7dd1dcb307b8a7d.png';
+
+// Safe environment variable getter
+function getEnvVar(key: string): string {
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      return import.meta.env[key] || '';
+    }
+  } catch (error) {
+    console.warn(`Could not access environment variable: ${key}`, error);
+  }
+  return '';
+}
 
 export function LeadForm() {
   const [formData, setFormData] = useState({
@@ -36,13 +48,13 @@ export function LeadForm() {
     setError("");
 
     // EmailJS Configuration - Using environment variables
-    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
-    const TEMPLATE_ID_CUSTOMER = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CUSTOMER || '';
-    const TEMPLATE_ID_ADMIN = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_ADMIN || '';
-    const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+    const SERVICE_ID = getEnvVar('VITE_EMAILJS_SERVICE_ID');
+    const TEMPLATE_ID_CUSTOMER = getEnvVar('VITE_EMAILJS_TEMPLATE_ID_CUSTOMER');
+    const TEMPLATE_ID_ADMIN = getEnvVar('VITE_EMAILJS_TEMPLATE_ID_ADMIN');
+    const PUBLIC_KEY = getEnvVar('VITE_EMAILJS_PUBLIC_KEY');
 
     // Google Sheets Configuration - Using environment variables
-    const GOOGLE_SHEETS_WEB_APP_URL = import.meta.env.VITE_GOOGLE_SHEETS_URL || '';
+    const GOOGLE_SHEETS_WEB_APP_URL = getEnvVar('VITE_GOOGLE_SHEETS_URL');
                                       
     // Debug: Log environment variable status (remove after debugging)
     console.log('Environment Variables Status:', {
@@ -85,7 +97,7 @@ export function LeadForm() {
         zip_code: formData.zipCode || 'Not provided',
         full_address: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`.replace(/^, |, , |, $/g, '') || 'Not provided',
       };
-      console.log(formattedData)
+
       // Send thank you email to customer
       await emailjs.send(
         SERVICE_ID,
@@ -108,104 +120,81 @@ export function LeadForm() {
         PUBLIC_KEY
       );
 
+      // Send data to Google Sheets
+      if (GOOGLE_SHEETS_WEB_APP_URL) {
+        try {
+          const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              timestamp: new Date().toISOString(),
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              email: formData.email,
+              phone: formData.phone,
+              insuranceTypes: formData.insuranceTypes.join(', '),
+              specialConsiderations: formData.specialConsiderations.map(item => {
+                if (item === 'other' && formData.otherConsideration) {
+                  return `Other: ${formData.otherConsideration}`;
+                }
+                return item;
+              }).join(', '),
+              callImmediately: formData.callImmediately ? 'Yes' : 'No',
+              appointmentDate: formData.appointmentDate,
+              appointmentTime: formData.appointmentTime,
+              message: formData.message,
+              address: formData.address,
+              city: formData.city,
+              state: formData.state,
+              zipCode: formData.zipCode,
+              fullAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`.replace(/^, |, , |, $/g, ''),
+            }),
+          });
 
-// Send data to Google Sheets
-if (GOOGLE_SHEETS_WEB_APP_URL) {
-  try {
-    const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {  // ✅ Now captures response
-      method: 'POST',
-      // ✅ Removed 'mode: no-cors' completely
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        timestamp: new Date().toISOString(),
-        firstName: formData.firstName,
-        // ... rest of the data
-      }),
-    });
+          const result = await response.json();
+          console.log('✅ Google Sheets Response:', result);
+          
+          if (result.result === 'success') {
+            console.log('✅ Data successfully saved to Google Sheets at row:', result.row);
+          } else {
+            console.error('❌ Google Sheets returned an error:', result.error);
+          }
+        } catch (sheetsError) {
+          console.error('❌ Failed to send to Google Sheets:', sheetsError);
+          // Don't fail the form submission if Google Sheets fails
+        }
+      } else {
+        console.warn('⚠️ Google Sheets URL not configured. Data not sent to sheets.');
+      }
 
-    const result = await response.json();  // ✅ Now reads the response
-    console.log('✅ Google Sheets Response:', result);  // ✅ Better logging
-    
-    if (result.result === 'success') {  // ✅ Verifies success
-      console.log('✅ Data successfully saved to Google Sheets at row:', result.row);
-    } else {
-      console.error('❌ Google Sheets returned an error:', result.error);
+      console.log("Form submitted:", formData);
+      setSubmitted(true);
+    } catch (err: any) {
+      console.error('Failed to send email:', err);
+      
+      // Provide specific error messages
+      let errorMessage = 'Failed to send your request. ';
+      
+      if (err.status === 400) {
+        if (err.text && err.text.includes('Public Key')) {
+          errorMessage = '❌ Invalid Public Key. Go to https://dashboard.emailjs.com/admin/account and copy your Public Key. ';
+        } else if (err.text && err.text.includes('Service')) {
+          errorMessage = '❌ Invalid Service ID. Check your EmailJS Service ID. ';
+        } else if (err.text && err.text.includes('Template')) {
+          errorMessage = '❌ Invalid Template ID. Check your EmailJS Template IDs. ';
+        } else {
+          errorMessage = '❌ EmailJS Error: ' + (err.text || 'Please check your EmailJS configuration. ');
+        }
+      }
+      
+      errorMessage += 'Please call us directly at 724-609-7115.';
+      setError(errorMessage);
+    } finally {
+      setSending(false);
     }
-  } catch (sheetsError) {
-    console.error('❌ Failed to send to Google Sheets:', sheetsError);
-    // Don't fail the form submission if Google Sheets fails
-  }
-} else {
-  console.warn('⚠️ Google Sheets URL not configured. Data not sent to sheets.');  // ✅ Added warning
-}
-  //     // Send data to Google Sheets
-  //     if (GOOGLE_SHEETS_WEB_APP_URL) {
-  //       try {
-  //         await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-  //           method: 'POST',
-  //           mode: 'no-cors',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             timestamp: new Date().toISOString(),
-  //             firstName: formData.firstName,
-  //             lastName: formData.lastName,
-  //             email: formData.email,
-  //             phone: formData.phone,
-  //             insuranceTypes: formData.insuranceTypes.join(', '),
-  //             specialConsiderations: formData.specialConsiderations.map(item => {
-  //               if (item === 'other' && formData.otherConsideration) {
-  //                 return `Other: ${formData.otherConsideration}`;
-  //               }
-  //               return item;
-  //             }).join(', '),
-  //             callImmediately: formData.callImmediately ? 'Yes' : 'No',
-  //             appointmentDate: formData.appointmentDate,
-  //             appointmentTime: formData.appointmentTime,
-  //             message: formData.message,
-  //             address: formData.address,
-  //             city: formData.city,
-  //             state: formData.state,
-  //             zipCode: formData.zipCode,
-  //             fullAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`.replace(/^, |, , |, $/g, ''),
-  //           }),
-  //         });
-  //         console.log('Data sent to Google Sheets successfully');
-  //       } catch (sheetsError) {
-  //         console.error('Failed to send to Google Sheets (non-critical):', sheetsError);
-  //         // Don't fail the form submission if Google Sheets fails
-  //       }
-  //     }
-
-  //     console.log("Form submitted:", formData);
-  //     setSubmitted(true);
-  //   } catch (err: any) {
-  //     console.error('Failed to send email:', err);
-      
-  //     // Provide specific error messages
-  //     let errorMessage = 'Failed to send your request. ';
-      
-  //     if (err.status === 400) {
-  //       if (err.text && err.text.includes('Public Key')) {
-  //         errorMessage = '❌ Invalid Public Key. Go to https://dashboard.emailjs.com/admin/account and copy your Public Key. ';
-  //       } else if (err.text && err.text.includes('Service')) {
-  //         errorMessage = '❌ Invalid Service ID. Check your EmailJS Service ID. ';
-  //       } else if (err.text && err.text.includes('Template')) {
-  //         errorMessage = '❌ Invalid Template ID. Check your EmailJS Template IDs. ';
-  //       } else {
-  //         errorMessage = '❌ EmailJS Error: ' + (err.text || 'Please check your EmailJS configuration. ');
-  //       }
-  //     }
-      
-  //     errorMessage += 'Please call us directly at 724-609-7115.';
-  //     setError(errorMessage);
-  //   } finally {
-  //     setSending(false);
-  //   }
-  // };
+  };
 
   const handleNewSubmission = () => {
     setSubmitted(false);
