@@ -46,6 +46,10 @@ export function LeadForm() {
     e.preventDefault();
     setSending(true);
     setError("");
+      
+      // VERSION CHECK - UPDATED JANUARY 19, 2026 - v3.0 IFRAME-ONLY
+      console.log('🔥🔥🔥 LEADFORM VERSION 3.0 LOADED - IFRAME METHOD ONLY 🔥🔥🔥');
+      console.log('Timestamp:', new Date().toISOString());
 
     // EmailJS Configuration - Using environment variables
     const SERVICE_ID = getEnvVar('VITE_EMAILJS_SERVICE_ID');
@@ -123,46 +127,65 @@ export function LeadForm() {
       // Send data to Google Sheets
       if (GOOGLE_SHEETS_WEB_APP_URL) {
         try {
-          const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              timestamp: new Date().toISOString(),
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              phone: formData.phone,
-              insuranceTypes: formData.insuranceTypes.join(', '),
-              specialConsiderations: formData.specialConsiderations.map(item => {
-                if (item === 'other' && formData.otherConsideration) {
-                  return `Other: ${formData.otherConsideration}`;
-                }
-                return item;
-              }).join(', '),
-              callImmediately: formData.callImmediately ? 'Yes' : 'No',
-              appointmentDate: formData.appointmentDate,
-              appointmentTime: formData.appointmentTime,
-              message: formData.message,
-              address: formData.address,
-              city: formData.city,
-              state: formData.state,
-              zipCode: formData.zipCode,
-              fullAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`.replace(/^, |, , |, $/g, ''),
-            }),
+          console.log('🚀🚀🚀 NEW CODE LOADED - v2.0 - Using iframe method 🚀🚀🚀');
+          console.log('📊 Attempting to send to Google Sheets via iframe form submission...');
+          
+          // Use a hidden iframe form submission to bypass CORS completely
+          // This is the most reliable method for Google Apps Script
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.name = 'google-sheets-iframe-' + Date.now();
+          document.body.appendChild(iframe);
+
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = GOOGLE_SHEETS_WEB_APP_URL;
+          form.target = iframe.name;
+
+          const fields = {
+            timestamp: new Date().toISOString(),
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            insuranceTypes: formData.insuranceTypes.join(', '),
+            specialConsiderations: formData.specialConsiderations.map(item => {
+              if (item === 'other' && formData.otherConsideration) {
+                return `Other: ${formData.otherConsideration}`;
+              }
+              return item;
+            }).join(', '),
+            callImmediately: formData.callImmediately ? 'Yes' : 'No',
+            appointmentDate: formData.appointmentDate,
+            appointmentTime: formData.appointmentTime,
+            message: formData.message,
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode,
+            fullAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}`.replace(/^, |, , |, $/g, ''),
+          };
+
+          Object.keys(fields).forEach(key => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = fields[key as keyof typeof fields] || '';
+            form.appendChild(input);
           });
 
-          const result = await response.json();
-          console.log('✅ Google Sheets Response:', result);
-          
-          if (result.result === 'success') {
-            console.log('✅ Data successfully saved to Google Sheets at row:', result.row);
-          } else {
-            console.error('❌ Google Sheets returned an error:', result.error);
-          }
+          document.body.appendChild(form);
+          form.submit();
+
+          // Clean up after a short delay
+          setTimeout(() => {
+            document.body.removeChild(form);
+            document.body.removeChild(iframe);
+          }, 1000);
+
+          console.log('📊 Data sent to Google Sheets via form submission (check your spreadsheet to verify)');
         } catch (sheetsError) {
-          console.error('❌ Failed to send to Google Sheets:', sheetsError);
+          console.error('🚀 NEW CODE ERROR (v2.0):', sheetsError);
           // Don't fail the form submission if Google Sheets fails
         }
       } else {
