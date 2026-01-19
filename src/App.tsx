@@ -12,6 +12,18 @@ emailjs.init({
   publicKey: "rI1-t507fnmxRNY3e",
 });
 
+// Safe environment variable getter
+function getEnvVar(key: string): string {
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      return import.meta.env[key] || '';
+    }
+  } catch (error) {
+    console.warn(`Could not access environment variable: ${key}`, error);
+  }
+  return '';
+}
+
 export default function App() {
   useEffect(() => {
     // Check if script is already loaded
@@ -37,10 +49,10 @@ export default function App() {
     }
 
     console.log('🔄 Loading Google Maps API script...');
-    
+    const apiKey = getEnvVar('VITE_GOOGLE_MAPS_API_KEY');
     const script = document.createElement('script');
     // Use loading=async for best practice (no callback parameter)
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCRfCb0k0r4h-Zh_1erFF7z29ZGwWklAAw&libraries=places&loading=async`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`
     script.async = true;
     script.defer = true;
     
