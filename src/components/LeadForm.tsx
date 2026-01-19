@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { CheckCircle2, ArrowRight, Star } from "./Icons";
+import { CheckCircle2, ArrowRight} from "./Icons";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import emailjs from '@emailjs/browser';
-import profileImage from 'figma:asset/baf04cd22f350e24551cf8dfa7dd1dcb307b8a7d.png';
+import profileImage from '../assets/DebbieSheeley.png';
 
 // Safe environment variable getter
 function getEnvVar(key: string): string {
