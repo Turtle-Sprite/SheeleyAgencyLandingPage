@@ -797,6 +797,7 @@ export function LeadForm() {
                   <button
                     type="submit"
                     disabled={sending}
+                    onClick={() => navigate('/thank-you')}
                     className="w-full bg-yellow-500 text-slate-900 py-4 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center gap-2 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {sending ? 'Sending...' : 'Send Your Quote Request'}
