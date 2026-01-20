@@ -1,6 +1,8 @@
 import { Check, Phone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function WhyChooseUs() {
+  const navigate = useNavigate();
   const reasons = [
     "We're a family-owned agency ready to serve customers with a local office.",
     "You will receive personal attention from the same professional and experienced team each time you call.",
@@ -22,13 +24,13 @@ export function WhyChooseUs() {
           ))}
         </div>
         <div className="text-center mt-12">
-          <a
-            href="tel:724-609-7115"
-            className="inline-flex items-center gap-2 bg-yellow-500 text-slate-900 px-8 py-4 rounded-lg hover:bg-yellow-600 transition-colors text-lg"
+          <button
+            onClick={() => navigate('/thank-you')}
+            className="inline-flex items-center gap-2 bg-yellow-500 text-slate-900 px-8 py-4 rounded-lg hover:bg-yellow-600 transition-colors text-lg cursor-pointer"
           >
             <Phone className="h-5 w-5" />
             Call Us Now
-          </a>
+          </button>
         </div>
       </div>
     </section>

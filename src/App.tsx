@@ -1,11 +1,10 @@
 
-import { Features } from "./components/Features";
-import { Testimonials } from "./components/Testimonials";
-import { LeadForm } from "./components/LeadForm";
-import { WhyChooseUs } from "./components/WhyChooseUs";
-import { Footer } from "./components/Footer";
 import { useEffect } from "react";
 import emailjs from '@emailjs/browser';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HomePage } from "./pages/HomePage";
+import { ThankYouPage } from "./components/ThankYouPage";
+
 
 // Call this once at the top level of your app
 emailjs.init({
@@ -47,12 +46,21 @@ export default function App() {
       
       return () => clearInterval(checkInterval);
     }
+    
 
     console.log('🔄 Loading Google Maps API script...');
-    const apiKey = getEnvVar('VITE_GOOGLE_MAPS_API_KEY');
+
+
+
     const script = document.createElement('script');
+    const apiKey = getEnvVar('VITE_GOOGLE_MAPS_API_KEY');
+    
+    if (!apiKey) {
+      console.warn('⚠️ Google Maps API key not found in environment variables');
+    }
+    
     // Use loading=async for best practice (no callback parameter)
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
     script.async = true;
     script.defer = true;
     
@@ -90,12 +98,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <LeadForm />
-      <Features />
-      <Testimonials />
-      <WhyChooseUs />
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/thank-you" element={<ThankYouPage />} />
+      </Routes>
+    </Router>
   );
-}
+
+  }

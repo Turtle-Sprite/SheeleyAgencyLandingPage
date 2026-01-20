@@ -3,6 +3,7 @@ import { CheckCircle2, ArrowRight} from "./Icons";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import emailjs from '@emailjs/browser';
 import profileImage from '../assets/DebbieSheeley.png';
+import { useNavigate } from "react-router-dom";
 
 // Safe environment variable getter
 function getEnvVar(key: string): string {
@@ -17,6 +18,7 @@ function getEnvVar(key: string): string {
 }
 
 export function LeadForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -326,14 +328,14 @@ export function LeadForm() {
     <div className="bg-gradient-to-br from-slate-900 to-blue-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex flex-col md:flex-row md:justify-between items-center gap-4">
-          <h2 className="text-2xl md:order-1">Deborah Sheeley Agency</h2>
-          <a 
-            href="tel:724-609-7115"
-            className="bg-yellow-500 text-slate-900 px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold md:order-3 flex flex-col items-center"
+        <h2 className="text-2xl md:order-1">Deborah Sheeley Agency</h2>
+          <button 
+            onClick={() => navigate('/thank-you')}
+            className="bg-yellow-500 text-slate-900 px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors font-semibold md:order-3 flex flex-col items-center cursor-pointer"
           >
             <span>Click to Call for A Quote</span>
             <span className="text-sm">724-609-7115</span>
-          </a>
+          </button>
           <div className="border-2 border-yellow-500 px-6 py-3 rounded-lg md:order-2">
             <div className="text-yellow-500 font-bold">
               Call Hours: 10:00 AM - 4:30 PM
