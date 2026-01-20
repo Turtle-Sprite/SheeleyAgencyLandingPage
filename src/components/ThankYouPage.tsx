@@ -1,11 +1,34 @@
 import { CheckCircle2 } from "./Icons";
 import { Footer } from "./Footer";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
 
 
 export function ThankYouPage() {
     const navigate = useNavigate();
+    useEffect(() => {
+        // Load gtag.js script
+        const script1 = document.createElement('script');
+        script1.async = true;
+        script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-D6SJ8DN3W4';
+        document.head.appendChild(script1);
+    
+        // Initialize gtag
+        const script2 = document.createElement('script');
+        script2.innerHTML = `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-D6SJ8DN3W4');
+        `;
+        document.head.appendChild(script2);
+    
+        // Cleanup function to remove scripts when component unmounts
+        return () => {
+          document.head.removeChild(script1);
+          document.head.removeChild(script2);
+        };
+      }, []);
   return (
     
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-blue-950 text-white flex flex-col">
