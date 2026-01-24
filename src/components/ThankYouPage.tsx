@@ -17,7 +17,7 @@ export function ThankYouPage() {
         const script2 = document.createElement('script');
         script2.innerHTML = `
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+          function gtag(){dataLayer.push(arguments);} 
           gtag('js', new Date());
           gtag('config', 'G-D6SJ8DN3W4');
         `;
