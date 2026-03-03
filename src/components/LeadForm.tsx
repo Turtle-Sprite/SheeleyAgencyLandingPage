@@ -338,7 +338,8 @@ export function LeadForm() {
           </button>
           <div className="border-2 border-yellow-500 px-6 py-3 rounded-lg md:order-2">
             <div className="text-yellow-500 font-bold">
-              Call Hours: M-F 9:30 AM - 4:30 PM
+              Call Hours: 
+              <div>Mon-Fri 9:30 AM - 4:30 PM</div>
             </div>
           </div>
         </div>
