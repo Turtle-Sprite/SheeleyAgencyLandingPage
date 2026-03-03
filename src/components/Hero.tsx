@@ -11,10 +11,10 @@ export function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl tracking-tight">
-              Transform Your Business with Our Solution
+              Get the insurance you need! 
             </h1>
             <p className="text-xl text-blue-100">
-              Join thousands of companies that have streamlined their operations and increased revenue by up to 300% with our proven platform.
+              Join a family agency dedicated to customer service. 
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
